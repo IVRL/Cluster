@@ -1,8 +1,9 @@
-# ICCluster at CVLab
+# ICCluster at IVRL
 
+(Partially copied from our friends at CVLab)
 If you find a mistake, something is not working, you know a better way to do it,
 or you need a new image to be built, please let me know or open an issue here.
-*\- Kris*
+
 
 ## Quick start with RunAI
 
