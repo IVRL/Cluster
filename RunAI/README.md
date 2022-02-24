@@ -50,9 +50,8 @@ Here is how it uses the submit command:
 runai submit $arg_job_name \
 	-i $MY_IMAGE \
 	--gpu $arg_gpu \
-	--pvc runai-pv-cvlabdata1:/cvlabdata1 \
-	--pvc runai-pv-cvlabdata2:/cvlabdata2 \
-	--pvc runai-pv-cvlabsrc1:/cvlabsrc1 \
+	--pvc runai-ivrl-scratch:/ivrl-scratch \
+	--pvc runai-pv-ivrldata2:/ivrl-data \
 	--large-shm \
 	-e CLUSTER_USER=$CLUSTER_USER \
 	-e CLUSTER_USER_ID=$CLUSTER_USER_ID \
@@ -66,9 +65,13 @@ runai submit $arg_job_name \
 The mechanism which sets up the user/group will not work on docker images built from scratch, because it uses [these setup scripts](./images/lab-base).
 The details of our images are in the [images](./images) section of this repository.
 You are welcome to use these images or build upon them.
-For direct use I recommend `ic-registry.epfl.ch/cvlab/lis/lab-python-ml:cuda10` as it has fairly modern versions of various scientific libraries.
 
-**Volume mounts**: The default volume mounts in the script are for CVLAB (cvlabdata volumes). Please change them if you are in a different lab.
+Each TA should plan a default image to use for their project and prepare it for the students. It needs to include images/lab-base/ in /opt/lab/ for the scripts to work.
+
+@Ehsan add your image below and edit this text
+For direct use I recommend `your-ic-registry-image-link` as it has fairly modern versions of various scientific libraries.
+
+**Volume mounts**: The default volume mounts in the script are for IVRL (ivrldata volume and ivrlscratch volume). Please change them if you are in a different lab.
 
 * List jobs in the lab: `runai list jobs`
 
@@ -131,6 +134,10 @@ To communicate with the Kubernetes server, we need to:
 * get the config files from [IC admins](https://www.epfl.ch/schools/ic/it/en/it-service-ic-it/) (`user.config`, `user.crt`, `user.key`), copy them to `~/.kube` and rename `user.config` to `config`.
 
 ## Pre-built images
+
+Each researcher should add their prebuilt images here
+
+### CVLab images
 
 I made some base images that should be useful to everyone. It should be easy to start using those, without having to build custom images.
 The user account setup is done through environment variables, so you do not have to place it in your Dockerfile.
@@ -205,47 +212,42 @@ To request a GPU, add this to the container:
 It may happen that the GPUs are all occupied, you can check how many are used:
 
 ```
-kubectl describe quota --namespace=cvlab
+kubectl describe quota --namespace=ivrl
 ```
 
 ### External storage
 
-By default the container only has access to its internal file system. To read or save some data, we will mount the cvlabdata drives.
+By default the container only has access to its internal file system. To read or save some data, we will mount the ivrl drives.
 
 This is achieved by adding this to your pod configuration (pod is the top-level object):
 
 ``` yaml
   volumes:
-    - name: cvlabsrc1
+    - name: ivrl-scratch
       persistentVolumeClaim:
-        claimName: pv-cvlabsrc1
-    - name: cvlabdata1
+        claimName: ivrl-scratch
+    - name: ivrldata2
       persistentVolumeClaim:
-        claimName: pv-cvlabdata1
-    - name: cvlabdata2
-      persistentVolumeClaim:
-        claimName: pv-cvlabdata2
+        claimName: pv-ivrldata2
 ```
 
 and this to each of your containers:
 
 ``` yaml
       volumeMounts:
-        - mountPath: /cvlabsrc1
-          name: cvlabsrc1
-        - mountPath: /cvlabdata1
-          name: cvlabdata1
-        - mountPath: /cvlabdata2
-          name: cvlabdata2
+        - mountPath: /ivrl-scratch
+          name: ivrl-scratch
+        - mountPath: /ivrldata2
+          name: ivrldata2
 ```
 
-#### CVLabData write permissions
+#### IVRLData write permissions
 
-To have write permissions to cvlabdata, we need to present our user IDs from the cluster.
+To have write permissions to ivrldata, we need to present our user IDs from the cluster.
 Run the `id` command on iccluster, you should get something like this:
 
 ```
-uid=123456(youruser) gid=11166(CVLAB-unit) groups=....
+uid=123456(youruser) gid=11166(IVRL-unit) groups=....
 ```
 
 Copy the number from `uid=...` and put it into the pod configuration file:
@@ -257,14 +259,14 @@ Copy the number from `uid=...` and put it into the pod configuration file:
       - name: CLUSTER_USER_ID
         value: "123456" # set this
       - name: CLUSTER_GROUP_NAME
-        value: "CVLAB-unit"
+        value: "IVRL-unit"
       - name: CLUSTER_GROUP_ID
         value: "11166"
 ```
 
 In my base containers, these variables are used to setup the user account with the following [script](./images/lab-base/setup_steps/10_cluster_user.sh) when the container start up.
 
-The images which have this feature so far are:
+The images which have this feature so far are (From CVLab):
 
 * `ic-registry.epfl.ch/cvlab/lis/lab-base:cpu`
 * `ic-registry.epfl.ch/cvlab/lis/lab-pytorch-extra:py38src`
@@ -356,27 +358,6 @@ and check for errors by viewing the the output of your process:
 kubectl logs pod_name
 ```
 
-## Resource allocation in CVLAB
-
-We want to ensure that everyone can use at least one GPU.
-We order the jobs and the position in the queue will decide which jobs will be allowed to run in case we have more requests than available resources.
-
-* A job using one person's 1st GPU has precedence over any person's 2nd GPU job. A 2nd GPU job is above any 3rd GPU job and so on.
-* Among the jobs of a single user, we order them according to user-set priority (in the label `priority`) with higher numbers being more important: priority `+1` is before priority `-1`, the default is 0.
-If priority is equal, the earlier job takes precedence.
-
-The queue is displayed at [http://iccvlabsrv13.iccluster.epfl.ch:5336/](http://iccvlabsrv13.iccluster.epfl.ch:5336/).
-If all of the 30 GPUs are occupied, and you want to run your **1st** job, you can kill the last job in the queue. In that case please notify the owner.
-
-Please remember to specify your user name and priority in the pod config.
-
-``` yaml
-metadata:
-  name: username-example-test
-  labels:
-    user: your-username
-    priority: "1" # job with higher priority number takes precedence
-```
 
 ## Running multiple experiments in one container
 
