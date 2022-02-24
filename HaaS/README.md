@@ -41,7 +41,7 @@ This URL must contain the **pure text** of the script.
 
 To run the customized script, choose *Own %url-post-install-script%* in the customization page during setup.
 
-One example of the customized script is provided here.
+One example of the customized script is provided [here](https://raw.githubusercontent.com/IVRL/Cluster/main/HaaS/script/setup.sh?token=GHSAT0AAAAAABRXBSIOUAXHCBDWIEZWNIIUYQXZNDA).
 
 
 
