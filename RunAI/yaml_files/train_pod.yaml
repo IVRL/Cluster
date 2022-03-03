@@ -1,0 +1,60 @@
+apiVersion: run.ai/v1
+kind: RunaiJob
+metadata:
+  name: ??? # Name your pod. Start with your initials for example ep-pod-name
+  labels:
+    user: ??? # Your username
+spec:
+  template:
+    metadata:
+      labels:
+        user: ???.??? # User e.g. firstname.lastname
+    spec:
+      hostIPC: true
+      schedulerName: runai-scheduler
+      restartPolicy: Never
+      nodeSelector:
+        run.ai/type: S8 # "S8" (CPU only), "G9" (Nvidia V100) or "G10" (Nvidia A100)
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: runai-pv-ivrldata2
+        - name: ivrl-scratch
+          persistentVolumeClaim:
+            claimName: runai-ivrl-scratch
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 4Gi # 4G shared memory allocated from memory.
+            claimName: runai-ivrl-scratch
+      containers:
+        - name: ubuntu # Name your container (pretty arbitrary)
+          image: ??? # The docker image file you want to use. It should be uploaded to ic-registry
+          env:
+            - name: CLUSTER_USER
+              value: ??? # Your epfl username. put inside ""
+            - name: CLUSTER_USER_ID
+              value: ??? # Your epfl UID. put inside ""
+            - name: CLUSTER_GROUP_NAME
+              value: ??? # Your group name. put inside ""
+            - name: CLUSTER_GROUP_ID
+              value: ??? # Your epfl GID. put inside ""
+          workingDir: /
+          command: [ "/bin/bash", "-c" ]
+          args: [ "source /opt/lab/setup.sh && your_train_script.sh" ]
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 16
+              memory: "64Gi"
+            limits:
+              nvidia.com/gpu: 0
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+            - mountPath: /scratch
+              name: ivrl-scratch
+            - mountPath: /data
+              name: data
+
+

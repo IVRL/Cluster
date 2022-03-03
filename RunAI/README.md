@@ -1,12 +1,11 @@
-# ICCluster at IVRL
+# Quick start with RunAI
 
-(Partially copied from our friends at CVLab)
-If you find a mistake, something is not working, you know a better way to do it, or you need a new image to be built,
-please let me know or open an issue here.
+RunAI is a scheduler built on top of Kubernetes that allows you to submit jobs to ICCluster.
+@Peter: Can you explain the big picture here. Like what is kubernetes, docker, runai, ....
+It should really help the students to understand things better.
 
-## Quick start with RunAI
 
-### Install RunAI CLI
+## Install RunAI CLI
 
 Things to download and put in $PATH:
 
@@ -16,7 +15,7 @@ Things to download and put in $PATH:
   or brew install helm
 * kubectl https://kubernetes.io/docs/tasks/tools/ (most probably already there if you were using Kubernetes before)
 
-More on the CLI installation:
+More on the RunAI CLI installation:
 https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 
 ### Login
@@ -31,12 +30,19 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 * In a console, configure your default project with: `runai config project ivrl`
 * Test if you see the lab's jobs `runai list jobs`
 
-### Job management
+## Submitting Jobs
 
+* To submit jobs to the cluster, you need to have your docker image uploaded to <https://ic-registry.epfl.ch>
+* If you're a (semester-project/master-thesis) student, you should ask your supervisor to provide you the docker image.
+* **You can find a list of existing images [here](./docker_images)**
 * You can submit jobs either using `runai submit` command or using `kubectl apply -f` command. If you're not familiar
-  with Kubernetes yaml file we suggest you use the `runai submit` command.
-* Submit jobs with `runai submit` [(doc)](https://docs.run.ai/Researcher/cli-reference/runai-submit/).
-* You can use our [runai submit script](doc/runai_one.sh) to make life easier. First, fill in `CLUSTER_USER`
+  with Kubernetes yaml files we suggest you use the `runai submit` command.
+
+## Submit using "runai submit"
+
+* Submit jobs with `runai submit` command [(doc)](https://docs.run.ai/Researcher/cli-reference/runai-submit/).
+* You can use our [runai submit script](scripts/runai_submit_train.sh) to make life easier! First, fill
+  in `CLUSTER_USER`
   , `CLUSTER_USER_ID` in the script to match your user. Then submit jobs like this:
     - `bash runai_one.sh job_name num_gpu "command"`
     - `bash runai_one.sh ep-gpu-pod 1 "python hello.py"`  
@@ -65,19 +71,11 @@ runai submit $arg_job_name \
 	--command -- /bin/bash -c $arg_cmd
 ```
 
-**Choice of docker images**:
-The mechanism which sets up the user/group will not work on docker images built from scratch, because it
-uses [these setup scripts](./images/ubuntu-base). The details of our images are in the [images](./images) section of this
-repository. You are welcome to use these images or build upon them.
+**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-pv-ivrldata2` volume
+and `runai-ivrl-scratch` volume). Please change them if you are in a different lab. You can get the list of available
+volumes using the command `kubectl get pvc`
 
-Each TA should plan a default image to use for their project and prepare it for the students. It needs to include
-images/lab-base/ in /opt/lab/ for the scripts to work.
-
-@Ehsan add your image below and edit this text For direct use I recommend `your-ic-registry-image-link` as it has fairly
-modern versions of various scientific libraries.
-
-**Volume mounts**: The default volume mounts in the script are for IVRL (ivrldata volume and ivrlscratch volume). Please
-change them if you are in a different lab.
+**Here is a list of handy runai commands:**
 
 * List jobs in the lab: `runai list jobs`
 
@@ -86,17 +84,147 @@ change them if you are in a different lab.
 * Stop running jobs with `runai delete jobname`. Also if you want to submit another job with the same name, you need to
   delete the existing one which occupies the name.
 
-* View logs `runai logs jobname`. Add `--tail 64` to see 64 latest lines (or other number)
+* View logs `runai logs jobname`. Add `--tail 64` to see 64 latest lines (or other number). If you want to find the
+  token for your jupyter notebook use `runai logs | grep token`.
 
 * Run an interactive console inside the container `runai bash jobname`.
 
-**Training vs interactive**: By default [jobs are *
+**Training vs interactive**: By default jobs are submitted in [*
 training* mode](https://docs.run.ai/Researcher/Walkthroughs/walkthrough-train/), which means they can use GPUs beyond
-the lab's quota of 28, but can be stopped and restarted (so its worth checkpointing etc). Jobs can be made *
-interactive* (non-preemptible) with the `--interactive` option of `runai submit`, but they are stopped after 12 hours,
-and there is a limited number of those allowed in the lab, so please do not create too many simultaneously.
+the lab's quota (28GPUs at the moment), but can be stopped and restarted (so its worth checkpointing etc). Jobs can be
+made *interactive* (non-preemptible) with the `--interactive` option of `runai submit`, but they will be stopped after
+12 hours, and there is a limited number of those allowed in the lab, so please do not create more than one interactive
+job simultaneously.
 
-### Asking the admins for help
+## Submit using "kubectl apply -f"
+
+* Using Kebernetes you will have more freedom to configure your pods.
+* You can find some sample yaml files under the [yaml_files](./yaml_files)
+* To submit a job using your config file run `kubectl apply -f config.yaml`
+
+### Defining your yaml config file
+
+An example config file is shown in [yaml_file/interactive_pod.yaml](./yaml_files/jupyter_pod.yaml).
+
+* First we specify the name of the pod and your epfl username. **Make sure to use your initials when naming your job**.
+  If you're named John Smith, your job name should be something like `js-gpu-pod`
+* If you want to submit a train job remove the line ` priorityClassName: "build"`
+
+``` yaml
+apiVersion: run.ai/v1
+kind: RunaiJob
+metadata:
+  name: ??? # Name your pod. Start with your initials for example ep-pod-name
+  labels:
+    priorityClassName: "build" # Interactive Job if present, for Train Job REMOVE this line
+    user: ??? # Your username
+spec:
+  template:
+    metadata:
+      labels:
+        user: ???.??? # User e.g. firstname.lastname
+```
+
+* Next we set the scheduler we want to use. The IC cluster uses runai-scheduler at the momemnt.
+* We can specify what kind of pod ang GPU type we want using `run.ai/type` option.
+
+```yaml
+spec:
+  hostIPC: true
+  schedulerName: runai-scheduler
+  restartPolicy: Never # once it finishes, do not restart
+  nodeSelector:
+    run.ai/type: S8 # "S8" (CPU only), "G9" (Nvidia V100) or "G10" (Nvidia A100)
+```
+
+By default, the container only has access to its internal file system. To read or save some data, we will mount the ivrl
+drives. This is achieved by adding this to your yaml config file:
+
+* The claim names can be found by executing `kubectl get pvc` in your terminal.
+
+```yaml
+volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: runai-pv-ivrldata2
+  - name: ivrl-scratch
+    persistentVolumeClaim:
+      claimName: runai-ivrl-scratch
+  - name: dshm
+    emptyDir:
+      medium: Memory
+      sizeLimit: 4Gi # 4G shared memory allocated from memory.
+      claimName: runai-ivrl-scratch
+```
+
+Then we specify the container related configs.
+
+* `image`: Specify the docker image that you want to use
+* `env`: Using this option we set environment variables inside the container. The variables listed here are necessary
+  for the /opt/lab/setup.sh script to work properly.
+* `workingDir`: sets the default directory in your container
+* `command`, and `args`: This determines the first command that will be executed when the container starts.
+  The `/opt/lab/setup.sh` script is intended to set your user information and give you sudo access in the pod. In this
+  example we additionally start jupyter lab.
+
+``` yaml
+containers:
+  - name: ubuntu ### Name your container (pretty arbitrary)
+    image: ??? # The docker image file you want to use. It should be uploaded to ic-registry
+    env:
+      - name: CLUSTER_USER
+        value: ??? # Your epfl username. put inside ""
+      - name: CLUSTER_USER_ID
+        value: ??? # Your epfl UID. put inside ""
+      - name: CLUSTER_GROUP_NAME
+        value: ??? # Your group name. put inside ""
+      - name: CLUSTER_GROUP_ID
+        value: ??? # Your epfl GID. put inside ""
+    workingDir: /
+    command: [ "/bin/bash", "-c" ]
+    args: [ "source /opt/lab/setup.sh && jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch --allow-root" ]
+    ports:
+      - containerPort: 8888
+        name: jupyter
+```
+
+Additionally, we can specify
+
+* `cpu`: The minimum number of CPU cores required
+* `memory`: The required amount of RAM
+* `nvidia.com/gpu`: The required GPU count
+* `volumeMounts`: Where to mount the volumes that we specified before
+
+```yaml
+imagePullPolicy: Always
+resources:
+  requests:
+    cpu: 16
+    memory: "64Gi"
+  limits:
+    nvidia.com/gpu: 0
+volumeMounts:
+  - mountPath: /dev/shm
+    name: dshm
+  - mountPath: /scratch
+    name: ivrl-scratch
+  - mountPath: /data
+    name: data
+```
+
+### Useful Kubernetes commands
+
+We can list, start and stop pods using the `kubectl` command
+
+* `kubectl get pods` \- lists pods which currently exist
+* `kubectl get pods --field-selector=status.phase=Running` \- lists pods which are currently running
+* `kubectl apply -f pod_definition_file.yaml` \- creates a new pod according to your specification
+* `kubectl delete pod pod_name` \- deletes your pod \(make sure you delete containers you don't use anymore\)
+* `kubectl describe pod pod_name` \- shows information about a pod\, including the output logs\, useful to diagnose why
+  things are not working\.
+* `kubectl logs pod_name` \- output logs from a pod
+
+## Asking the admins for help
 
 The cluster machines sometimes get stuck and need to be restarted, or there are bugs in RunAI. In these cases, we need
 to ask the ICIT admins for help. To localize the problem, they need good diagnostic information from you.
@@ -127,327 +255,53 @@ Here is the copy of this procedure, so that you may view it outside of the EPFL 
   ```
 * provide others log messages you can have
 
-## Overview
-
-Docker *containers* are the processses running on a docker host (that is our server). They use the same operating system
-as the host, but have their own internal file system and do no see the host's file system.
-
-*Images* are snapshots of that internal file system. For example we installed our libraries in a container and take a
-snapshot so that we can start new containers from the same base. Images can be made by saving a given container's file
-system, but usually are specified declaratively with [Dockerfiles](https://docs.docker.com/engine/reference/builder/).
-
-[Kubernetes](https://kubernetes.io/) is a system that organizes running a big number of docker containers on a
-multi-machine cluster. The rationale is that Kubernetes will allocate resources when we need to run a job and release
-them later, leading to a more efficient usage than when machines are assigned to people - we do not pay for the
-resources when the jobs are not running.
-
-## Setup
-
-To communicate with the Kubernetes server, we need to:
-
-* [install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-* get the config files from [IC admins](https://www.epfl.ch/schools/ic/it/en/it-service-ic-it/) (`user.config`
-  , `user.crt`, `user.key`), copy them to `~/.kube` and rename `user.config` to `config`.
-
-## Pre-built images
-
-Each researcher should add their prebuilt images here
-
-### CVLab images
-
-I made some base images that should be useful to everyone. It should be easy to start using those, without having to
-build custom images. The user account setup is done through environment variables, so you do not have to place it in
-your Dockerfile.
-
-[`ic-registry.epfl.ch/cvlab/lis/lab-python-ml:cuda11`](./images/lab-python-ml/Dockerfile) contains CUDA, PyTorch,
-Tensorflow, OpenCV, [GluonCV](https://gluon-cv.mxnet.io/), [Detectron2](https://github.com/facebookresearch/detectron2)
-, [PyTorch3D](https://pytorch3d.org/) as well as other commonly used packages. If you need more, you can extend this and
-build your own image on top (Dockerfile `FROM`) or let me know that something needs adding.
-
-[`ic-registry.epfl.ch/cvlab/lis/lab-pytorch:cuda11`](./images/lab-pytorch/Dockerfile) - smaller image without TF or
-Gluon.
-
-[`ic-registry.epfl.ch/cvlab/lis/lab-base:cpu`](images/ubuntu-base/Dockerfile) is the base with just user account setup
-for cvlabdata mounting, the `:cuda10` version additionally has CUDA installed.
-
-More about images [here](./images).
-
-The GPUs we have at the cluster work faster
-with [half-precision training](https://pytorch.org/blog/accelerating-training-on-nvidia-gpus-with-pytorch-automatic-mixed-precision/)
-.
-
-## Defining your containers
-
-We tell Kubernetes to run our containers by creating Pods.
-A [pod](https://kubernetes.io/docs/concepts/workloads/pods/pod/) is a definition of a group of containers that should be
-run.
-
-An example pod file is shown in [pods/example-test.yaml](./pods/example-test.yaml).
-
-First we specify the name of the pod - we will use this name to refer to it by different commands. Please also provide
-your user name and desired priority of the job, these are used for resource allocation.
-
-``` yaml
-metadata:
-  name: username-example-test
-  labels:
-    user: your-username
-    priority: "1" # job with higher priority number takes precedence
-```
-
-Then we say what containers should be running in that pod, most importantly what image to start from and what command to
-run.
-
-``` yaml
-spec:
-  restartPolicy: Never # once it finishes, do not restart
-  containers:
-    - name: base-test
-      image: ic-registry.epfl.ch/cvlab/lis/lab-base:cpu
-      command: ["/opt/lab/setup_and_wait.sh"]
-```
-
-We set the [`restartPolicy`](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy)
-to `Never` so that once the job is finished, it releases the resources and does not restart. By default, Kubernetes
-restarts containers when they finish. We could also use a
-Kubernetes [Job](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/).
-
-Futher we specify the environment variables, for example:
-
-``` yaml
-env:
-  - name: JUPYTER_CONFIG_DIR
-    value: "/cvlabdata2/home/lis/kubernetes_example/.jupyter"
-  ...
-```
-
-The variables concerning users and groups, as well as `volumes` are described in the section
-about [cvlabdata](#connection-to-cvlabdata).
-
-The `ports` entry is described [later](#network-communication-port-forwarding).
-
-### GPU
-
-To request a GPU, add this to the container:
-
-``` yaml
-      resources:
-        limits:
-          nvidia.com/gpu: 1 # requesting 1 GPU
-```
-
-It may happen that the GPUs are all occupied, you can check how many are used:
-
-```
-kubectl describe quota --namespace=ivrl
-```
-
-### External storage
-
-By default the container only has access to its internal file system. To read or save some data, we will mount the ivrl
-drives.
-
-This is achieved by adding this to your pod configuration (pod is the top-level object):
-
-``` yaml
-  volumes:
-    - name: ivrl-scratch
-      persistentVolumeClaim:
-        claimName: ivrl-scratch
-    - name: ivrldata2
-      persistentVolumeClaim:
-        claimName: pv-ivrldata2
-```
-
-and this to each of your containers:
-
-``` yaml
-      volumeMounts:
-        - mountPath: /ivrl-scratch
-          name: ivrl-scratch
-        - mountPath: /ivrldata2
-          name: ivrldata2
-```
-
-#### IVRLData write permissions
-
-To have write permissions to ivrldata, we need to present our user IDs from the cluster. Run the `id` command on
-iccluster, you should get something like this:
-
-```
-uid=123456(youruser) gid=11166(IVRL-unit) groups=....
-```
-
-Copy the number from `uid=...` and put it into the pod configuration file:
-
-``` yaml
-      env:
-      - name: CLUSTER_USER
-        value: "username" # set this
-      - name: CLUSTER_USER_ID
-        value: "123456" # set this
-      - name: CLUSTER_GROUP_NAME
-        value: "IVRL-unit"
-      - name: CLUSTER_GROUP_ID
-        value: "11166"
-```
-
-In my base containers, these variables are used to setup the user account with the
-following [script](images/ubuntu-base/setup_steps/10_cluster_user.sh) when the container start up.
-
-The images which have this feature so far are (From CVLab):
-
-* `ic-registry.epfl.ch/cvlab/lis/lab-base:cpu`
-* `ic-registry.epfl.ch/cvlab/lis/lab-pytorch-extra:py38src`
-* `ic-registry.epfl.ch/cvlab/lis/lab-python-ml:py38src`
-* and anything built on top of those
-
-### Startup Command
-
-The `command` field specifies the program to run when the container starts. Also when this command finishes, the
-container will shut down.
-
-For example running a python program:
-
-``` yaml
-command: ["python", "some_program.py", "--option", "val"]
-```
-
-In the premade images with user setup:
-
-``` yaml
-# run a python job
-command:
-  - "/opt/lab/setup_and_run_command.sh"
-  - "cd /cvlabdata2/home/lis/kubernetes_example && python job_example.py"
-```
-
-``` yaml
-# start a jupyter server
-command:
-  - "/opt/lab/setup_and_run_command.sh"
-  - "timeout 4h jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/cvlabdata2/home/lis/kubernetes_example"
-  # Timeout will ensure the pod closes after some time,
-  # so we don't risk leaving it running forever.
-```
-
-You can run those examples in `/cvlabdata2/home/lis/kubernetes_example`, I will clear it out periodically.
-
-#### Timeout
-
-If a process does not finish by itself, I recommend limiting its lifetime
-with [timeout](https://www.tecmint.com/run-linux-command-with-time-limit-and-timeout/). The following command will
-automatically shut down Jupyter after 4 hours:
-
-```
-timeout 4h jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/cvlabdata2/home/lis/kubernetes_example"
-```
-
-## Running the containers
-
-We list, start and stop pods using the *kubectl* command
-
-* `kubectl get pods` \- list pods which currently exist
-* `kubectl get pods --field-selector=status.phase=Running` \- list pods which are currently running
-* `kubectl create -f pod_definition_file.yaml` \- create a new pod according to your specification
-* `kubectl delete pod pod_name` \- delete your pod \(make sure you delete containers you don't use anymore\)
-* `kubectl describe pods/pod_name` \- show information about a pod\, including the output logs\, useful to diagnose why
-  it isn't working\.
-* `kubectl logs pod_name` \- output logs from a pod
-* `kubectl describe quota --namespace=cvlab` \- show how many GPUs are used
-
-#### Connecting an interactive console to the container
-
-Once a pod is running, we can connect to it and run commands inside:
-
-```
-kubectl exec -it pod_name -- /bin/bash
-```
-
-This will be executed as the `root` user, so switch to your user which can write on cvlab drives:
-
-```
-su youruser -c /bin/bash
-```
-
-This can be combined into a single convenient command:
-
-```
-kubectl exec -it pod-name -- bash -c "su youtuser -c tmux"
-```
-
-#### Diagnosing problems
-
-If the job is not running as intended, you can see its status:
-
-```
-kubectl describe pod/pod_name
-```
-
-and check for errors by viewing the the output of your process:
-
-```
-kubectl logs pod_name
-```
-
-## Running multiple experiments in one container
-
-The GPUs in the Kubernetes cluster usually have `32GB` of memory, so compared to the previous 12GB GPUs, they should be
-capable of running 2 or 3 experiments of usual size at once.
-
-The script below shows a simple way to run several experiments at once. The commands will run in parallel, the container
-will finish when the last one finishes.
-
-``` bash
-# my_job.sh
-python task_1.py &
-python task_2.py &
-bash task_3.sh &
-# the jobs will run in parallel
-# the container will finish when the last one finishes
-wait
-```
-
 ## Network communication - port forwarding
 
-See the example [pod configuration for jupyter](./pods/example-jupyter.yaml). To connect to our container over the
+See the example [pod configuration for jupyter](./yaml_files/jupyter_pod.yaml). To connect to our container over the
 network, first we need to expose the ports in our container configuration:
 
-``` yaml
+```yaml
 ports:
-- containerPort: 8888
-  name: jupyter
+  - containerPort: 8888
+    name: jupyter
 ```
 
-One the container with exposed ports is running, we will make a tunnel from our local computer's port to the container's
-port
-([Kubernetes port forwarding](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/))
+Once the container with exposed ports is running, we will make a tunnel from our local computer's port to the container'
+s port
+using ([Kubernetes port forwarding](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/))
 .
 
 ```
-kubectl port-forward mypod local_port:container_port
+kubectl port-forward pod-name local_port:container_port
 ```
 
 For example for jupyter:
 
 ```
-kubectl port-forward lis-example 8001:8888
+kubectl port-forward ep-jupyter-pod 8899:8888
 ```
 
-Then we can open jupyter at localhost:8001. The password in the example config is `hello`.
+Then we can open jupyter at localhost:8899. To get the token to access the jupyter you can
+execute `runai logs pod-name | grep token`.
 
-To shut down jupyter (and the container with it) from the web interface:
+**Important:** Only use jupyter inside your interactive pods. The interactive jobs will automatically shutdown after
+around 12hours.
 
-* JupyterLab: select *File -> Quit* from the menu in the top-left
-* Jupyter Notebook: press the *Quit* button in the top right
+[comment]: <> (To shut down jupyter &#40;and the container with it&#41; from the web interface:)
 
-Jupyter will run forever if we do not close it. Therefore I recommend limiting it
-with [timeout](https://www.tecmint.com/run-linux-command-with-time-limit-and-timeout/). The following command will
-automatically shut down Jupyter after 4 hours:
+[comment]: <> (* JupyterLab: select *File -> Quit* from the menu in the top-left)
 
-```
-timeout 4h jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/cvlabdata2/home/lis/kubernetes_example"
-```
+[comment]: <> (* Jupyter Notebook: press the *Quit* button in the top right)
 
-Alternatively a [load balancer](https://github.com/EPFL-IC/caas#step-three-accessing-pods-from-outside-of-the-cluster)
-can be used to make the container accessible through the network.
+[comment]: <> (Jupyter will run forever if we do not close it. Therefore I recommend limiting it)
+
+[comment]: <> (with [timeout]&#40;https://www.tecmint.com/run-linux-command-with-time-limit-and-timeout/&#41;. The following command will)
+
+[comment]: <> (automatically shut down Jupyter after 4 hours:)
+
+## Acknowledgement
+
+This repo borrows heavily from [CVLab kubernetes guide](https://github.com/cvlab-epfl/cvlab-kubernetes-guide). We
+simplified the guide from CVLab and removed the parts that are not relevant to the current cluster. If you find a
+mistake, something is not working, you know a better way, or you need a new image to be built, please let us know or
+open an issue here.

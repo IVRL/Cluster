@@ -70,8 +70,35 @@ We prepared some images which will hopefully be of use to you (click to see Dock
 
 [`ic-registry.epfl.ch/ivrl/ubuntu-base`](ubuntu-base/Dockerfile)
 
-Basic lightweight ubuntu-20 image. You can make additional setup extending setup.sh script . This script sets the user information and gives you sudo access
-inside the image. 
+Basic lightweight ubuntu-20 image. Use this image for testing purpose to make sure you got everything right. Since this
+is a very light image (~ 100mb), you can create a pod very fast using this image.
+
+### datascience-python:
+
+[`ic-registry.epfl.ch/ivrl/datascience-python`](datascience-python/Dockerfile)
+
+This image (~920mb) includes everything you need for a datascience project using python such as
+
+* Jupyter, and Jupyterlab
+* Numpy, Pandas
+* Scikit-learn, Scipy
+* Matplotlib
+* OpenCV
+
+### pytorch-gpu
+
+[`ic-registry.epfl.ch/ivrl/nvidia-pytorch-20-12`](pytorch-gpu/Dockerfile)
+
+This image (~8gb) contains pytorch and is compatible with both V100 and A100 GPUs in the cluster. Other packages
+included are
+
+* Jupyter, and Jupyterlab
+* Numpy, Pandas
+* Scikit-learn, Scipy
+* Matplotlib
+
+This image is built upon `nvcr.io/nvidia/pytorch:20.12-py3` container from Nvidia.
+
 
 [comment]: <> (#### lab-pytorch-cuda-ext)
 
@@ -85,12 +112,10 @@ inside the image.
 
 [comment]: <> (* OpenCV)
 
-
 ## Extending an image
 
-In case you want to extend the image, please see this
-example [ubuntu-base Dockerfile](./ubuntu-base/Dockerfile). Here we install libraries from the repositories,
-but it is possible to do much more.
+In case you want to extend the image, please see this example [ubuntu-base Dockerfile](./ubuntu-base/Dockerfile). Here
+we install libraries from the repositories, but it is possible to do much more.
 
 ```Dockerfile
 # start from the base image
@@ -111,10 +136,13 @@ RUN apt-get update &&  DEBIAN_FRONTEND="noninteractive" TZ="Europe/Zurich" apt-g
 ```
 
 **Make sure to switch user to ROOT and copy the `setup.sh` script to /opt/lab/ directory inside your Dockerfile**
+You can make additional setup by extending the `setup.sh` script . This script sets the user information and gives you
+sudo access inside the image. The script should be inside the same directory as your Dockerfile.
+
 ```Dockerfile
 USER root
 RUN mkdir /opt/lab
-COPY ../setup.sh /opt/lab/
+COPY setup.sh /opt/lab/
 RUN chmod -R a+x /opt/lab/
 ```
 
@@ -142,11 +170,15 @@ Now you can use the image in your pods!
 
 The `build.sh` file provides all these commands at once.
 
-### Multi-stage builds
+[comment]: <> (### Multi-stage builds)
 
-If your software needs to be compiled, you may benefit
-from [multi-stage builds](https://docs.docker.com/develop/develop-images/multistage-build/):
-this involves creating a temporary container with the build tools where the compilation takes place, then we only copy
-the results of the compilation to the output image. This saves space in the output image and allows the build process to
-be cached.
+[comment]: <> (If your software needs to be compiled, you may benefit)
+
+[comment]: <> (from [multi-stage builds]&#40;https://docs.docker.com/develop/develop-images/multistage-build/&#41;:)
+
+[comment]: <> (this involves creating a temporary container with the build tools where the compilation takes place, then we only copy)
+
+[comment]: <> (the results of the compilation to the output image. This saves space in the output image and allows the build process to)
+
+[comment]: <> (be cached.)
 
