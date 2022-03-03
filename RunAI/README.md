@@ -1,9 +1,8 @@
 # Quick start with RunAI
 
-RunAI is a scheduler built on top of Kubernetes that allows you to submit jobs to ICCluster.
-@Peter: Can you explain the big picture here. Like what is kubernetes, docker, runai, ....
-It should really help the students to understand things better.
-
+RunAI is a scheduler built on top of Kubernetes that allows you to submit jobs to ICCluster. @Peter: Can you explain the
+big picture here. Like what is kubernetes, docker, runai, .... It should really help the students to understand things
+better.
 
 ## Install RunAI CLI
 
@@ -44,11 +43,11 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 * You can use our [runai submit script](scripts/runai_submit_train.sh) to make life easier! First, fill
   in `CLUSTER_USER`
   , `CLUSTER_USER_ID` in the script to match your user. Then submit jobs like this:
-    - `bash runai_one.sh job_name num_gpu "command"`
-    - `bash runai_one.sh ep-gpu-pod 1 "python hello.py"`  
+    - `./runai_one.sh job_name num_gpu "command"`
+    - `./runai_one.sh ep-gpu-pod 1 "python hello.py"`  
       creates a job named `ep-gpu-pod`, **uses 1 GPU**, and runs `python hello.py`
 
-    - `bash runai_one.sh ep-gpu-pod 0.5 "python hello_half.py"`  
+    - `./runai_one.sh ep-gpu-pod 0.5 "python hello_half.py"`  
       creates a job named `ep-gpu-pod`, receives **half of a GPUs memory** (2 such jobs can fit on one GPU!), and
       runs `python hello_half.py`
 
@@ -70,6 +69,11 @@ runai submit $arg_job_name \
 	-e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
 	--command -- /bin/bash -c $arg_cmd
 ```
+
+***Warning:*** Different shells parse strings differently. Our [runai submit script](scripts/runai_submit_train.sh)
+script works properly if you're using [zsh](https://ohmyz.sh/) shell. If your job does not start successfully, try to
+write your command (`python hello.py` in the above example) directly inside
+the [runai submit script](scripts/runai_submit_train.sh) instead of passing it as an argument.
 
 **Volume mounts**: The default volume mounts in the script are for IVRL (`runai-pv-ivrldata2` volume
 and `runai-ivrl-scratch` volume). Please change them if you are in a different lab. You can get the list of available
