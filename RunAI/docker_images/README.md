@@ -17,15 +17,6 @@ and login to our docker image repository:
 docker login ic-registry.epfl.ch
 ```
 
-Afterwards, clear the plain-text password file:
-
-```
-rm ~/.docker/config.json
-```
-
-<!-- wget https://github.com/docker/docker-credential-helpers/releases/download/v0.6.3/docker-credential-secretservice-v0.6.3-amd64.tar.gz -->
-<!-- tar xvf docker-credential-secretservice-v0.6.3-amd64.tar.gz -->
-
 ## Dockerfiles
 
 An image is specified by a directory containing a file named *Dockerfile*. Here is
@@ -41,28 +32,30 @@ Other common operations are:
 
 * run commands with `RUN`:
 
-```
-RUN apt-get update \
-	&& apt-get --no-install-recommends -y install sudo htop tmux locate mc less \
-	&& apt-get clean
+```dockerfile
+RUN apt-get update &&  DEBIAN_FRONTEND="noninteractive" TZ="Europe/Zurich" apt-get install -y \
+    curl \
+    git \
+    sudo 
 ```
 
 * set environment variables with `ENV`:
 
 ```
-ENV AUTO_SHUTDOWN_TIME 1h
+ENV MY_VARIABLE 3
 ```
 
 * copy files from the current directory
 
 ```
-COPY local_file /opt/lab/file_inside_image
+COPY local_file /opt/lab/
 ```
 
 ## Existing images
 
-You can view the existing images available in our repository at <https://ic-registry.epfl.ch/> (login to see IVRL's
-images). There are also many publicly available images at the [Docker Hub](https://hub.docker.com/search?q=&type=image).
+You can view the existing images available in our repository at <https://ic-registry.epfl.ch/>. Please ask your
+supervisor to give you access to IVRL namespace. There are also many publicly available images at
+the [Docker Hub](https://hub.docker.com/search?q=&type=image) that you can build on top of to create your own image.
 
 We prepared some images which will hopefully be of use to you (click to see Dockerfiles):
 
