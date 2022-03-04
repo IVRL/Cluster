@@ -40,14 +40,16 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 ## Submit using "runai submit"
 
 * Submit jobs with `runai submit` command [(doc)](https://docs.run.ai/Researcher/cli-reference/runai-submit/).
-* You can use our [runai submit script](scripts/runai_submit_train.sh) to make life easier! First, fill
-  in `CLUSTER_USER`
-  , `CLUSTER_USER_ID` in the script to match your user. Then submit jobs like this:
-    - `./runai_one.sh job_name num_gpu "command"`
-    - `./runai_one.sh ep-gpu-pod 1 "python hello.py"`  
+* You can use our [runai submit script](scripts/runai_submit_train.sh) to make life easier! 
+	* First, fill in `CLUSTER_USER`, `CLUSTER_USER_ID` in the script to match your user.
+		- `CLUSTER_USER` is the user name of your GASPAR.
+		- We can obtain your `CLUSTER_USER_ID` data in your people.epfl.ch page. Use your GASPAR to access the administrative data, and `CLUSTER_USER_ID` is in the `UID` field.
+	* Then submit jobs like this:
+    	- `./runai_one.sh job_name num_gpu "command"`
+    	- `./runai_one.sh ep-gpu-pod 1 "python hello.py"`  
       creates a job named `ep-gpu-pod`, **uses 1 GPU**, and runs `python hello.py`
 
-    - `./runai_one.sh ep-gpu-pod 0.5 "python hello_half.py"`  
+    	- `./runai_one.sh ep-gpu-pod 0.5 "python hello_half.py"`  
       creates a job named `ep-gpu-pod`, receives **half of a GPUs memory** (2 such jobs can fit on one GPU!), and
       runs `python hello_half.py`
 
@@ -236,7 +238,7 @@ to ask the ICIT admins for help. To localize the problem, they need good diagnos
 The [detailed procedure can be found here](https://icitdocs.epfl.ch/display/clusterdocs/Good+hints+to+open+a+ticket).
 Here is the copy of this procedure, so that you may view it outside of the EPFL network:
 
-**To open a ticket, please send an email to support-icit@epfl.ch.**
+**To open a ticket, please send an email to support-icit@epfl.ch. For students not affiliated with the lab, please keep at least one lab members in the copy.**
 
 * Chose an explicit **subject**
 * qualify your ticket by providing all the information useful to resolve your issue
