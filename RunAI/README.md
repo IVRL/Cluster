@@ -43,13 +43,16 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 * You can use our [runai submit script](scripts/runai_submit_train.sh) to make life easier! First, fill
   in `CLUSTER_USER`
   , `CLUSTER_USER_ID` in the script to match your user. Then submit jobs like this:
-    - `./runai_one.sh job_name num_gpu "command"`
-    - `./runai_one.sh ep-gpu-pod 1 "python hello.py"`  
-      creates a job named `ep-gpu-pod`, **uses 1 GPU**, and runs `python hello.py`
+    - `./runai_submit_train.sh ep-gpu-pod 1 "python hello.py"`
+      Which creates a job named "ep-gpu-pod", **uses 1 GPU**, and runs `python hello.py`
 
-    - `./runai_one.sh ep-gpu-pod 0.5 "python hello_half.py"`  
-      creates a job named `ep-gpu-pod`, receives **half of a GPUs memory** (2 such jobs can fit on one GPU!), and
+    - `./runai_submit_train.sh ep-gpu-pod 0.5 "python hello_half.py"`
+      Which creates a job named "ep-gpu-pod", receives **half of a GPUs memory** (2 such jobs can fit on one GPU!), and
       runs `python hello_half.py`
+  
+    - `./runai_submit_jupyter.sh ep-jupyter-pod 1`
+    Which creates a job named "ep-jupyter-pod", receives **uses 1 GPU** and then runs `jupyter lab` on it.
+
 
 * **Make sure to use your initials when naming your job**. If you're named John Smith, your job name should be something
   like `js-gpu-pod`
@@ -58,16 +61,18 @@ Here is how it uses the submit command:
 
 ```bash
 runai submit $arg_job_name \
-	-i $MY_IMAGE \
-	--gpu $arg_gpu \
-	--pvc runai-pv-ivrldata2:/data \
-	--pvc runai-ivrl-scratch:/scratch \
-	--large-shm \
-	-e CLUSTER_USER=$CLUSTER_USER \
-	-e CLUSTER_USER_ID=$CLUSTER_USER_ID \
-	-e CLUSTER_GROUP_NAME=$CLUSTER_GROUP_NAME \
-	-e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
-	--command -- /bin/bash -c $arg_cmd
+  -i $MY_IMAGE \
+  --gpu $arg_gpu \
+  --interactive \ # For training jobs remove this line.
+  --pvc runai-pv-ivrldata2:/data \
+  --pvc runai-ivrl-scratch:/scratch \
+  --large-shm \
+  -e CLUSTER_USER=$CLUSTER_USER \
+  -e CLUSTER_USER_ID=$CLUSTER_USER_ID \
+  -e CLUSTER_GROUP_NAME=$CLUSTER_GROUP_NAME \
+  -e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
+  --host-ipc \
+  --command -- /bin/bash -c $arg_cmd
 ```
 
 ***Warning:*** Different shells parse strings differently. Our [runai submit script](scripts/runai_submit_train.sh)

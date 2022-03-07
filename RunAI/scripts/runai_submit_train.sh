@@ -14,13 +14,16 @@
 
 arg_job_name=$1
 arg_gpu=$2
-arg_cmd="source /opt/lab/setup.sh && ${3}"
 
 CLUSTER_USER="???"                                # Your epfl username. Change accordingly
 CLUSTER_USER_ID="???"                             # Your epfl UID. Change accordingly
 CLUSTER_GROUP_NAME="ivrl"                         # Your group name. Change accordingly
 CLUSTER_GROUP_ID="11227"                          # Your epfl GID. Change accordingly
 MY_IMAGE="ic-registry.epfl.ch/ivrl/ubuntu20-base" # Change accordingly
+#MY_IMAGE="ic-registry.epfl.ch/ivrl/datascience-python"
+#MY_IMAGE="ic-registry.epfl.ch/ivrl/pytorch1.10:cuda11.3"
+
+arg_cmd="source /opt/lab/setup.sh && su $CLUSTER_USER -c '$3'"
 
 echo "Job [$arg_job_name] gpu $arg_gpu -> [$arg_cmd]"
 

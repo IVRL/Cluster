@@ -1,4 +1,6 @@
 FROM ubuntu:20.04
+MAINTAINER Ehsan Pajouheshgar<ehsan.pajouheshgar@epfl.ch>
+
 
 RUN apt-get update &&  DEBIAN_FRONTEND="noninteractive" TZ="Europe/Zurich" apt-get install -y \
     curl \
@@ -23,7 +25,8 @@ RUN pip3 --no-cache-dir install \
 	opencv-contrib-python-headless \
     jupyter \
     jupyterlab \
-    tqdm
+    tqdm \
+    ipywidgets
 
 
 
