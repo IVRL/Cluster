@@ -41,8 +41,8 @@ spec:
             - name: CLUSTER_GROUP_ID
               value: ??? # Your epfl GID. put inside ""
           workingDir: /
-          command: [ "/bin/bash", "-c" ]
-          args: [ "source /opt/lab/setup.sh  && su pajouheshgar -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'" ]
+          command: [ "/bin/bash", "-c" ] # Change ??? to your username bellow
+          args: [ "source /opt/lab/setup.sh  && su ??? -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'" ]
           ports:
             - containerPort: 8888
               name: jupyter
