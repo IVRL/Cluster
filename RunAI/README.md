@@ -4,6 +4,8 @@ RunAI is a scheduler built on top of Kubernetes that allows you to submit jobs t
 big picture here. Like what is kubernetes, docker, runai, .... It should really help the students to understand things
 better.
 
+also adding part about deleting guidelines
+
 ## Install RunAI CLI
 
 Things to download and put in $PATH:
