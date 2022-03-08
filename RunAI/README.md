@@ -23,7 +23,7 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 
 * Ask your supervisor to give you access to use
   RunAI [Asking for access](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
-* Connect to <https://app.run.ai>. Use "Login with SSO" and make sure you can login.
+* Connect to <https://app.run.ai>. Use "Login with SSO" and make sure you can login (use "EPFL" as the workspace name).
 * Download the config file: <https://icitdocs.epfl.ch/download/attachments/3211266/config> and place it in `~/.kube/`.
   If the download link changes, it is likely to be
   listed [here](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
@@ -35,7 +35,7 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 
 * To submit jobs to the cluster, you need to have your docker image uploaded to <https://ic-registry.epfl.ch>
 * If you're a (semester-project/master-thesis) student, you should ask your supervisor to provide you the docker image.
-* **You can find a list of existing images [here](./docker_images)**
+* **You can find a list of existing images [here](./docker_images#existing-images)**
 * You can submit jobs either using `runai submit` command or using `kubectl apply -f` command. If you're not familiar
   with Kubernetes yaml files we suggest you use the `runai submit` command.
 
