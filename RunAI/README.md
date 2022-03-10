@@ -1,10 +1,23 @@
 # Quick start with RunAI
+## General information
 
-RunAI is a scheduler built on top of Kubernetes that allows you to submit jobs to ICCluster. @Peter: Can you explain the
-big picture here. Like what is kubernetes, docker, runai, .... It should really help the students to understand things
-better.
+In this repo we will show you how to use runai and kubernetes to run your own or pre-made Docker images on the **EPFL cluster**.
 
-also adding part about deleting guidelines
+**Docker** images are environments that fully encompass everything needed to run a certain application and are decoupled from the host system.
+You can find more information on docker images using the following [link](https://docs.docker.com/get-started/overview/)
+
+**Kuberenetes** is a management and deployment tool for docker images (containers). In our case it manages the deployment of images on the EPFL cluster.
+More information on Kubernetes [here](https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)
+
+Finally, **RunAI** is a scheduler built on top of Kubernetes that allows you to submit jobs to ICCluster. 
+More about RunAI [here](https://docs.run.ai/Researcher/overview-researcher/)
+
+## Important Disclaimer
+
+Once you start using the EPFL cluster, the resources you use will be charged to the lab, and they cost a lot. To make sure we do not receive excessive bills please strictly control your cluster usage. Amongst other things:
+* Only submit jobs that you will also use.
+* No idle running: If you are finished with a session, terminate it.
+* **Delete your jobs** when finished (even if the session already terminated) with `runai delete jobname` such as not to crowd the job list.
 
 ## Install RunAI CLI
 
