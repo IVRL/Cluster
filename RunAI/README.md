@@ -12,6 +12,8 @@ More information on Kubernetes [here](https://kubernetes.io/docs/concepts/overvi
 Finally, **RunAI** is a scheduler built on top of Kubernetes that allows you to submit jobs to ICCluster. 
 More about RunAI [here](https://docs.run.ai/Researcher/overview-researcher/)
 
+TAs and supervisors should provide students with pre-made docker images whenever possible to avoid unnecessary duplication and delays.
+
 ## Important Disclaimer
 
 Once you start using the EPFL cluster, the resources you use will be charged to the lab, and they cost a lot. To make sure we do not receive excessive bills please strictly control your cluster usage. Amongst other things:
