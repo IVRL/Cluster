@@ -266,14 +266,12 @@ where type is
 For example if I'm doing a semester project in year 2023 in the spring semester my folder should be
 named `2023-spring-sp-pajouheshgar`.
 
-**Important:** You should use sudo to create your directory but make sure to change the ownership to your user using
 
+**Important:** If you get permission denied error in your pod, try to check the owner of your files using `ls -all`.
+The owner should be your user and not the root. To change the ownership you can use the command bellow:
 * `sudo chown -R $CLUSTER_USER:$CLUSTER_GROUP_NAME your_directory`
 
 where `$CLUSTER_USER` is your username and `$CLUSTER_GROUP_NAME` is the group name ("ivrl" in our case).
-
-**Important:** If you get permission denied error in your pod, try to check the owner of your files using `ls -all`.
-The owner should be your user and not the root. To change the ownership you can use the above command. 
 
 
 ## Network communication - port forwarding
