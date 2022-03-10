@@ -99,7 +99,7 @@ volumes using the command `kubectl get pvc`
 * View logs `runai logs jobname`. Add `--tail 64` to see 64 latest lines (or other number). If you want to find the
   token for your jupyter notebook use `runai logs | grep token`.
 
-* Run an interactive console inside the container `runai bash jobname`.
+* Run an interactive console inside the container `runai bash jobname`. This equivalent to ssh-ing to your job.
 
 **Training vs interactive**: By default jobs are submitted in [*
 training* mode](https://docs.run.ai/Researcher/Walkthroughs/walkthrough-train/), which means they can use GPUs beyond
@@ -267,6 +267,25 @@ at least one lab members in the copy.**
   $ kubectl logs <pod name> -n runai-<lab>
   ```
 * provide others log messages you can have
+
+## Create your working directory
+
+The semester-project, master thesis and intern students all have to create a folder under `/scratch/students` and put
+all of their files and codes there. The name of your folder should follow this pattern: `year-semester-type-username`,
+where type is
+
+* `sp` for semester project
+* `mt` for master thesis
+* `in` for intern students
+
+For example if I'm doing a semester project in year 2023 in the spring semester my folder should be
+named `2023-spring-sp-pajouheshgar`.
+
+**Important:** You should use sudo to create your directory but make sure to change the ownership to your user using
+
+* `chown -R $CLUSTER_USER:$CLUSTER_GROUP_NAME your_directory`
+
+where `$CLUSTER_USER` is your username and `$CLUSTER_GROUP_NAME` is the group name ("ivrl" in our case).
 
 ## Network communication - port forwarding
 
