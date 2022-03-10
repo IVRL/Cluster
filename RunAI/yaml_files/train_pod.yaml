@@ -1,7 +1,7 @@
 apiVersion: run.ai/v1
 kind: RunaiJob
 metadata:
-  name: ??? # Name your pod. Start with your initials for example ep-pod-name
+  name: ??? # Name your pod. Start with your initials for example ep-pod-name. Must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character
   labels:
     user: ??? # Your username
 spec:
