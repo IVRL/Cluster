@@ -116,7 +116,7 @@ volumes using the command `kubectl get pvc`
 * View logs `runai logs jobname`. Add `--tail 64` to see 64 latest lines (or other number). If you want to find the
   token for your jupyter notebook use `runai logs | grep token`.
 
-* Run an interactive console inside the container `runai bash jobname`. This equivalent to ssh-ing to your job.
+* Run an interactive console inside the container `runai bash jobname`. This is equivalent to ssh-ing into your job.
 
 **Training vs interactive**: By default jobs are submitted in [*
 training* mode](https://docs.run.ai/Researcher/Walkthroughs/walkthrough-train/), which means they can use GPUs beyond
@@ -253,38 +253,6 @@ We can list, start and stop pods using the `kubectl` command
   things are not working\.
 * `kubectl logs pod_name` \- output logs from a pod
 
-## Asking the admins for help
-
-The cluster machines sometimes get stuck and need to be restarted, or there are bugs in RunAI. In these cases, we need
-to ask the ICIT admins for help. To localize the problem, they need good diagnostic information from you.
-
-The [detailed procedure can be found here](https://icitdocs.epfl.ch/display/clusterdocs/Good+hints+to+open+a+ticket).
-Here is the copy of this procedure, so that you may view it outside of the EPFL network:
-
-**To open a ticket, please send an email to support-icit@epfl.ch. For students not affiliated with the lab, please keep
-at least one lab members in the copy.**
-
-* Chose an explicit **subject**
-* qualify your ticket by providing all the information useful to resolve your issue
-* attach your **yaml file** or the **runai command** used to start your job
-* attach job/pod's **log information** (replace `<lab>` by your lab name)
-    * find your job/pod:
-  ```
-  $ runai list job -p <lab>
-  $ kubectl get pods -n runai-<lab>
-  ```
-    * get job/pod's description
-  ```
-  $ runai describe job <job name> -p <lab>
-  $ kubectl describe pod <pod name> -n runai-<lab>
-  ```
-    * get job/pod's log
-  ```
-  $ runai logs pod name> -p <lab>
-  $ kubectl logs <pod name> -n runai-<lab>
-  ```
-* provide others log messages you can have
-
 ## Create your working directory
 
 The semester-project, master thesis and intern students all have to create a folder under `/scratch/students` and put
@@ -351,6 +319,38 @@ around 12hours.
 [comment]: <> (with [timeout]&#40;https://www.tecmint.com/run-linux-command-with-time-limit-and-timeout/&#41;. The following command will)
 
 [comment]: <> (automatically shut down Jupyter after 4 hours:)
+
+## Asking the admins for help
+
+The cluster machines sometimes get stuck and need to be restarted, or there are bugs in RunAI. In these cases, we need
+to ask the ICIT admins for help. To localize the problem, they need good diagnostic information from you.
+
+The [detailed procedure can be found here](https://icitdocs.epfl.ch/display/clusterdocs/Good+hints+to+open+a+ticket).
+Here is the copy of this procedure, so that you may view it outside of the EPFL network:
+
+**To open a ticket, please send an email to support-icit@epfl.ch. For students not affiliated with the lab, please keep
+at least one lab members in the copy.**
+
+* Chose an explicit **subject**
+* qualify your ticket by providing all the information useful to resolve your issue
+* attach your **yaml file** or the **runai command** used to start your job
+* attach job/pod's **log information** (replace `<lab>` by your lab name)
+    * find your job/pod:
+  ```
+  $ runai list job -p <lab>
+  $ kubectl get pods -n runai-<lab>
+  ```
+    * get job/pod's description
+  ```
+  $ runai describe job <job name> -p <lab>
+  $ kubectl describe pod <pod name> -n runai-<lab>
+  ```
+    * get job/pod's log
+  ```
+  $ runai logs pod name> -p <lab>
+  $ kubectl logs <pod name> -n runai-<lab>
+  ```
+* provide others log messages you can have
 
 ## Acknowledgement
 
