@@ -59,14 +59,14 @@ the [Docker Hub](https://hub.docker.com/search?q=&type=image) that you can build
 
 We prepared some images which will hopefully be of use to you (click to see Dockerfiles):
 
-### ubuntu-base:
+### ubuntu-base
 
 [`ic-registry.epfl.ch/ivrl/ubuntu-base`](ubuntu-base/Dockerfile)
 
 Basic lightweight ubuntu-20 image. Use this image for testing purpose to make sure you got everything right. Since this
 is a very light image (~ 100mb), you can create a pod very fast using this image.
 
-### datascience-python:
+### datascience-python
 
 [`ic-registry.epfl.ch/ivrl/datascience-python`](datascience-python/Dockerfile)
 
@@ -78,9 +78,9 @@ This image (~920mb) includes everything you need for a datascience project using
 * Matplotlib
 * OpenCV
 
-### pytorch1.10:cuda11.
+### pytorch1.10:cuda11
 
-[`ic-registry.epfl.ch/ivrl/pytorch1.10:cuda11.3`](pytorch1.10+cuda11.3)
+[`ic-registry.epfl.ch/ivrl/pytorch1.10:cuda11.3v2`](pytorch1.10+cuda11.3)
 
 This image (~6.4gb) contains pytorch and is compatible with both V100 and A100 GPUs in the cluster. Other packages
 included are
