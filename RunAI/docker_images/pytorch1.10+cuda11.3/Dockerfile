@@ -24,7 +24,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.3-Linu
     && /opt/conda/bin/conda install mkl numpy scipy pandas ipython jupyter \
     && /opt/conda/bin/conda clean --all -y
 
-ENV PATH="/opt/conda/bin:/usr/local/cuda/bin:${PATH}" \
+ENV PATH="~/.local/bin:/opt/conda/bin:/usr/local/cuda/bin:${PATH}" \
     LD_LIBRARY_PATH="/usr/local/cuda/lib64"
 
 # Make $PATH and $LD_LIBRARY PATH available to all users
