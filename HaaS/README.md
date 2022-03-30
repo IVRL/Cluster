@@ -1,5 +1,9 @@
 # HaaS Cluster at IVRL
 
+## Important Disclaimer
+
+This page is only for PhD students affiliated with the lab. Semester Project students and Master students should not use the instructions here.
+
 ## Quick Start
 
 ### Login
