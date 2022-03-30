@@ -297,7 +297,7 @@ kubectl port-forward pod-name local_port:container_port
 For example for jupyter:
 
 ```
-kubectl port-forward ep-jupyter-pod 8899:8888
+kubectl port-forward ep-jupyter-pod-0-0 8899:8888
 ```
 
 Then we can open jupyter at localhost:8899. To get the token to access the jupyter you can
