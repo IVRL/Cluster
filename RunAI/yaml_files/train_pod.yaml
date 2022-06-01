@@ -26,7 +26,6 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 4Gi # 4G shared memory allocated from memory.
-            claimName: runai-ivrl-scratch
       containers:
         - name: ubuntu # Name your container (pretty arbitrary)
           image: ??? # The docker image file you want to use. It should be uploaded to ic-registry
