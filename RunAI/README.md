@@ -37,7 +37,8 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 ### Login
 
 * Ask your supervisor to give you access to use
-  RunAI [Asking for access](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
+  RunAI [Asking for access](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML). Choose Nicoletta Isaac
+ (Assistant) Or Sabine Süsstrunk (Head of the unit) as the approver.
 * Connect to <https://app.run.ai>. Use "Login with SSO" and make sure you can login (use "EPFL" as the workspace name).
 * Download the config file: <https://icitdocs.epfl.ch/download/attachments/3211266/config> and place it in `~/.kube/` (which you have to mkdir yourself).
   If the download link changes, it is likely to be
@@ -297,7 +298,7 @@ kubectl port-forward pod-name local_port:container_port
 For example for jupyter:
 
 ```
-kubectl port-forward ep-jupyter-pod 8899:8888
+kubectl port-forward ep-jupyter-pod-0-0 8899:8888
 ```
 
 Then we can open jupyter at localhost:8899. To get the token to access the jupyter you can
