@@ -256,13 +256,14 @@ We can list, start and stop pods using the `kubectl` command
 
 ## Create your working directory
 
-The semester-project, master thesis and intern students all have to create a folder under `/scratch/students` and put
+The semester-project, master thesis, intern students, and research scholars all have to create a folder under `/scratch/students` and put
 all of their files and codes there. The name of your folder should follow this pattern: `year-semester-type-username`,
 where type is
 
 * `sp` for semester project
 * `mt` for master thesis
 * `in` for intern students
+* `rs` for research scholars
 
 For example if I'm doing a semester project in year 2023 in the spring semester my folder should be
 named `2023-spring-sp-pajouheshgar`.
