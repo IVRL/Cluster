@@ -54,6 +54,7 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
 * **You can find a list of existing images [here](./docker_images#existing-images)**
 * You can submit jobs either using `runai submit` command or using `kubectl apply -f` command. If you're not familiar
   with Kubernetes yaml files we suggest you use the `runai submit` command.
+* Once submitted, your job will be automatically assigned to a machine and will pull the docker image. Hence, your job will usually starts/runs a few minutes after being submitted. You can get more details on the status of your job using `runai describe job`
 
 ## Submit using "runai submit"
 
