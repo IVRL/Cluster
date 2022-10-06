@@ -272,9 +272,9 @@ named `2023-spring-sp-pajouheshgar`.
 
 **Important:** If you get permission denied error in your pod, try to check the owner of your files using `ls -all`.
 The owner should be your user and not the root. To change the ownership you can use the command bellow:
-* `sudo chown -R $CLUSTER_USER:$CLUSTER_GROUP_NAME your_directory`
+* `sudo chown -Rv $CLUSTER_USER:$CLUSTER_GROUP_NAME your_directory`
 
-where `$CLUSTER_USER` is your username and `$CLUSTER_GROUP_NAME` is the group name ("ivrl" in our case).
+where `$CLUSTER_USER` is your username and `$CLUSTER_GROUP_NAME` is the group name ("ivrl" in our case). Be sure that `your_directory` is your working directory (please never do `sudo chown -Rv $CLUSTER_USER:$CLUSTER_GROUP_NAME /scratch` for instance).
 
 
 ## Network communication - port forwarding
