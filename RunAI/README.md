@@ -86,8 +86,8 @@ runai submit $arg_job_name \
   -i $MY_IMAGE \
   --gpu $arg_gpu \
   --interactive \ # For training jobs remove this line.
-  --pvc runai-pv-ivrldata2:/data \
-  --pvc runai-ivrl-scratch:/scratch \
+  --pvc runai-ivrl-$CLUSTER_USER-ivrldata2:/data \
+  --pvc runai-ivrl-$CLUSTER_USER-scratch:/scratch \
   --large-shm \
   -e CLUSTER_USER=$CLUSTER_USER \
   -e CLUSTER_USER_ID=$CLUSTER_USER_ID \
@@ -104,7 +104,7 @@ the [runai submit script](scripts/runai_submit_train.sh) instead of passing it a
 
 **Volume mounts**: The default volume mounts in the script are for IVRL (`runai-pv-ivrldata2` volume
 and `runai-ivrl-scratch` volume). Please change them if you are in a different lab. You can get the list of available
-volumes using the command `kubectl get pvc`
+volumes using the command `kubectl get pvc -n runai-ivrl-{Your gaspar username}`
 
 **Here is a list of handy runai commands:**
 
@@ -171,21 +171,21 @@ spec:
 By default, the container only has access to its internal file system. To read or save some data, we will mount the ivrl
 drives. This is achieved by adding this to your yaml config file:
 
-* The claim names can be found by executing `kubectl get pvc` in your terminal.
+* The claim names can be found by executing `kubectl get pvc -n runai-ivrl-{your gaspar username}` in your terminal.
 
 ```yaml
 volumes:
   - name: data
     persistentVolumeClaim:
-      claimName: runai-pv-ivrldata2
+      claimName: runai-ivrl-{Your gaspar username}-ivrldata2
   - name: ivrl-scratch
     persistentVolumeClaim:
-      claimName: runai-ivrl-scratch
+      claimName: runai-ivrl-{Your gaspar username}-scratch
   - name: dshm
     emptyDir:
       medium: Memory
       sizeLimit: 4Gi # 4G shared memory allocated from memory.
-      claimName: runai-ivrl-scratch
+      claimName: runai-ivrl-{Your gaspar username}-scratch
 ```
 
 Then we specify the container related configs.
