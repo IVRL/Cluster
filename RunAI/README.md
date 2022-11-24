@@ -86,8 +86,8 @@ runai submit $arg_job_name \
   -i $MY_IMAGE \
   --gpu $arg_gpu \
   --interactive \ # For training jobs remove this line.
-  --pvc runai-ivrl-$CLUSTER_USER-ivrldata2:/data \
-  --pvc runai-ivrl-$CLUSTER_USER-scratch:/scratch \
+  --pvc runai-ivrl-???-ivrldata2:/data \ # Fill ??? with your epfl username
+  --pvc runai-ivrl-???-scratch:/scratch \ # Fill ??? with your epfl username
   --large-shm \
   -e CLUSTER_USER=$CLUSTER_USER \
   -e CLUSTER_USER_ID=$CLUSTER_USER_ID \
