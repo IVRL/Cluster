@@ -2,6 +2,7 @@ apiVersion: run.ai/v1
 kind: RunaiJob
 metadata:
   name: ??? # Name your pod. Start with your initials for example ep-pod-name. Must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character
+  namespace: ??? # Use `runai list projects` to see what project you belong to. Then put the project namespace. It should be something like runai-ivrl-{your gaspar username}
   labels:
     priorityClassName: "build" # Interactive Job if present, for Train Job REMOVE this line
     user: ??? # Your username
@@ -19,10 +20,10 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: runai-pv-ivrldata2
+            claimName: runai-ivrl-???-ivrldata2 # Put your gaspar username here
         - name: ivrl-scratch
           persistentVolumeClaim:
-            claimName: runai-ivrl-scratch
+            claimName: runai-ivrl-???-scratch # Put your gaspar username here
         - name: dshm
           emptyDir:
             medium: Memory

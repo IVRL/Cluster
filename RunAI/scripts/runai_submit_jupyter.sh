@@ -24,13 +24,15 @@ echo "Job [$arg_job_name] gpu $arg_gpu -> [$arg_cmd]"
 
 # To submit an interactive job add --interactive bellow
 # Change pvc accordingly
+# Fill the ??? with your epfl username
+
 runai submit $arg_job_name \
   -i $MY_IMAGE \
   --gpu $arg_gpu \
   --interactive \
   --port 8888:8888 \
-  --pvc runai-pv-ivrldata2:/data \
-  --pvc runai-ivrl-scratch:/scratch \
+  --pvc runai-ivrl-???-ivrldata2:/data \
+  --pvc runai-ivrl-???-scratch:/scratch \
   --large-shm \
   -e CLUSTER_USER=$CLUSTER_USER \
   -e CLUSTER_USER_ID=$CLUSTER_USER_ID \
