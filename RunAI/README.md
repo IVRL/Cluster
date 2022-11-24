@@ -102,9 +102,9 @@ script works properly if you're using [zsh](https://ohmyz.sh/) shell. If your jo
 write your command (`python hello.py` in the above example) directly inside
 the [runai submit script](scripts/runai_submit_train.sh) instead of passing it as an argument.
 
-**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-pv-ivrldata2` volume
-and `runai-ivrl-scratch` volume). Please change them if you are in a different lab. You can get the list of available
-volumes using the command `kubectl get pvc -n runai-ivrl-{Your gaspar username}`
+**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your epfl username}-ivrldata2` volume
+and `runai-ivrl-{Your epfl username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
+volumes using the command `kubectl get pvc -n runai-ivrl-{Your epfl username}`
 
 **Here is a list of handy runai commands:**
 
