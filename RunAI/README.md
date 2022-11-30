@@ -40,7 +40,7 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
   RunAI [Asking for access](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML). Choose Nicoletta Isaac
  (Assistant) Or Sabine Süsstrunk (Head of the unit) as the approver.
 * Connect to <https://app.run.ai>. Use "Login with SSO" and make sure you can login (use "EPFL" as the workspace name).
-* Download the config file: <https://icitdocs.epfl.ch/download/attachments/3211266/config?version=1&modificationDate=1638285353000&api=v2> and place it in `~/.kube/` (which you have to mkdir yourself).
+* Download the config file: <https://icitdocs.epfl.ch/download/attachments/23986177/config?version=1&modificationDate=1656340636000&api=v2> and place it in `~/.kube/` (which you have to mkdir yourself).
   If the download link changes, it is likely to be
   listed [here](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
 * In a console, to login to RunAI, run: `runai login`
