@@ -104,7 +104,7 @@ the [runai submit script](scripts/runai_submit_train.sh) instead of passing it a
 
 **Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your epfl username}-ivrldata2` volume
 and `runai-ivrl-{Your epfl username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
-volumes using the command `kubectl get pvc -n runai-ivrl-{Your epfl username}`
+volumes using the command `kubectl get pvc`
 
 **Here is a list of handy runai commands:**
 
@@ -171,7 +171,7 @@ spec:
 By default, the container only has access to its internal file system. To read or save some data, we will mount the ivrl
 drives. This is achieved by adding this to your yaml config file:
 
-* The claim names can be found by executing `kubectl get pvc -n runai-ivrl-{your gaspar username}` in your terminal.
+* The claim names can be found by executing `kubectl get pvc` in your terminal.
 
 ```yaml
 volumes:
