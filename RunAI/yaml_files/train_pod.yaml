@@ -19,10 +19,10 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: runai-pv-ivrldata2
+            claimName: runai-ivrl-???-ivrldata2 # Put your gaspar username here
         - name: ivrl-scratch
           persistentVolumeClaim:
-            claimName: runai-ivrl-scratch
+            claimName: runai-ivrl-???-scratch # Put your gaspar username here
         - name: dshm
           emptyDir:
             medium: Memory
