@@ -45,7 +45,7 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
   listed [here](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
 * In a console, to login to RunAI, run: `runai login`
 * In a console, configure your default project with: `runai config project ivrl-{Your gaspar username}`
-* Test if you see the lab's jobs `runai list jobs`
+* Test if you see your running jobs `runai list jobs`
 
 ## Submitting Jobs
 
