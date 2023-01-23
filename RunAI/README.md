@@ -44,7 +44,7 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
   If the download link changes, it is likely to be
   listed [here](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
 * In a console, to login to RunAI, run: `runai login`
-* In a console, configure your default project with: `runai config project ivrl`
+* In a console, configure your default project with: `runai config project ivrl-{Your gaspar username}`
 * Test if you see the lab's jobs `runai list jobs`
 
 ## Submitting Jobs
@@ -102,8 +102,8 @@ script works properly if you're using [zsh](https://ohmyz.sh/) shell. If your jo
 write your command (`python hello.py` in the above example) directly inside
 the [runai submit script](scripts/runai_submit_train.sh) instead of passing it as an argument.
 
-**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your epfl username}-ivrldata2` volume
-and `runai-ivrl-{Your epfl username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
+**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your gaspar username}-ivrldata2` volume
+and `runai-ivrl-{Your gaspar username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
 volumes using the command `kubectl get pvc`
 
 **Here is a list of handy runai commands:**
