@@ -29,6 +29,8 @@ echo "Job [$arg_job_name] gpu $arg_gpu -> [$arg_cmd]"
 runai submit $arg_job_name \
   -i $MY_IMAGE \
   --gpu $arg_gpu \
+  --cpu-limit 4 \ #increase if needed
+  --memory-limit 8G \ #increase if needed
   --interactive \
   --port 8888:8888 \
   --pvc runai-ivrl-???-ivrldata2:/data \
