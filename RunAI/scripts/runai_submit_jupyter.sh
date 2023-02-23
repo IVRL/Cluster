@@ -25,12 +25,13 @@ echo "Job [$arg_job_name] gpu $arg_gpu -> [$arg_cmd]"
 # To submit an interactive job add --interactive bellow
 # Change pvc accordingly
 # Fill the ??? with your epfl username
+# Increase cpu-limit and memory-limit if needed
 
 runai submit $arg_job_name \
   -i $MY_IMAGE \
   --gpu $arg_gpu \
-  --cpu-limit 4 \ #increase if needed
-  --memory-limit 8G \ #increase if needed
+  --cpu-limit 4 \
+  --memory-limit 8G \
   --interactive \
   --port 8888:8888 \
   --pvc runai-ivrl-???-ivrldata2:/data \
