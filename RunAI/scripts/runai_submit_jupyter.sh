@@ -18,9 +18,7 @@ CLUSTER_GROUP_ID="11227"  # Your epfl GID
 #MY_IMAGE="ic-registry.epfl.ch/ivrl/pytorch1.10:cuda11.3"
 MY_IMAGE="ic-registry.epfl.ch/ivrl/datascience-python"
 
-arg_cmd="source /opt/lab/setup.sh && su $CLUSTER_USER -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'"
-
-echo "Job [$arg_job_name] gpu $arg_gpu -> [$arg_cmd]"
+echo "Job [$arg_job_name] gpu $arg_gpu"
 
 # To submit an interactive job add --interactive bellow
 # Change pvc accordingly
@@ -42,7 +40,7 @@ runai submit $arg_job_name \
   -e CLUSTER_GROUP_NAME=$CLUSTER_GROUP_NAME \
   -e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
   --host-ipc \
-  --command -- /bin/bash -c $arg_cmd
+  --command -- /bin/bash -c "\"source /opt/lab/setup.sh && su $CLUSTER_USER -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'\""
 sleep 1
 
 runai describe job $arg_job_name
