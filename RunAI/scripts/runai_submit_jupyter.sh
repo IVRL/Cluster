@@ -31,7 +31,7 @@ runai submit $arg_job_name \
   --cpu-limit 4 \
   --memory-limit 8G \
   --interactive \
-  --port 8888:8888 \
+  --service-type portforward  --port 8888:8888 \
   --pvc runai-ivrl-???-ivrldata2:/data \
   --pvc runai-ivrl-???-scratch:/scratch \
   --large-shm \
@@ -40,7 +40,6 @@ runai submit $arg_job_name \
   -e CLUSTER_GROUP_NAME=$CLUSTER_GROUP_NAME \
   -e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
   --host-ipc \
-  --command -- /bin/bash -c "\"source /opt/lab/setup.sh && su $CLUSTER_USER -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'\""
+  --command -- /bin/bash -c "\"source /opt/lab/setup.sh && su $CLUSTER_USER -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'\"" &
 sleep 1
-
-runai describe job $arg_job_name
+watch -n 1 runai describe job $arg_job_name
