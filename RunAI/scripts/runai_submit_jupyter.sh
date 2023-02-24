@@ -40,6 +40,4 @@ runai submit $arg_job_name \
   -e CLUSTER_GROUP_NAME=$CLUSTER_GROUP_NAME \
   -e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
   --host-ipc \
-  --command -- /bin/bash -c "\"source /opt/lab/setup.sh && su $CLUSTER_USER -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'\"" &
-sleep 1
-watch -n 1 runai describe job $arg_job_name
+  --command -- /bin/bash -c "\"source /opt/lab/setup.sh && su $CLUSTER_USER -c 'jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/scratch'\""
