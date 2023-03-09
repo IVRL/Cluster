@@ -25,7 +25,7 @@ Once you start using the EPFL cluster, the resources you use will be charged to 
 
 Things to download and put in $PATH:
 
-* runai https://github.com/run-ai/runai-cli/releases
+* runai On your terminal use `wget --content-disposition https://runai-epfl.iccluster.epfl.ch/cli/linux` (for Linux) or `wget --content-disposition https://runai-epfl.iccluster.epfl.ch/cli/darwin` (for mac). To identify where the current runai binary is, please run `which runai`. After copying it, run `chmod +x` on the file to make it executable. Then you must run `runai logout` followed by `runai login`
 * helm
   https://github.com/helm/helm/releases
   or brew install helm
