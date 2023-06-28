@@ -25,7 +25,7 @@ Once you start using the EPFL cluster, the resources you use will be charged to 
 
 Things to download and put in $PATH:
 
-* runai https://github.com/run-ai/runai-cli/releases
+* runai On your terminal use `wget --content-disposition https://runai-epfl.iccluster.epfl.ch/cli/linux` (for Linux) or `wget --content-disposition https://runai-epfl.iccluster.epfl.ch/cli/darwin` (for mac). To identify where the current runai binary is, please run `which runai`. After copying it, run `chmod +x` on the file to make it executable. Then you must run `runai logout` followed by `runai login`
 * helm
   https://github.com/helm/helm/releases
   or brew install helm
@@ -40,12 +40,12 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
   RunAI [Asking for access](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML). Choose Nicoletta Isaac
  (Assistant) Or Sabine Süsstrunk (Head of the unit) as the approver.
 * Connect to <https://app.run.ai>. Use "Login with SSO" and make sure you can login (use "EPFL" as the workspace name).
-* Download the config file: <https://icitdocs.epfl.ch/download/attachments/3211266/config?version=1&modificationDate=1638285353000&api=v2> and place it in `~/.kube/` (which you have to mkdir yourself).
+* Download the config file: <https://icitdocs.epfl.ch/download/attachments/23986177/config?version=1&modificationDate=1656340636000&api=v2> and place it in `~/.kube/` (which you have to mkdir yourself).
   If the download link changes, it is likely to be
   listed [here](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
 * In a console, to login to RunAI, run: `runai login`
-* In a console, configure your default project with: `runai config project ivrl`
-* Test if you see the lab's jobs `runai list jobs`
+* In a console, configure your default project with: `runai config project ivrl-{Your gaspar username}`
+* Test if you see your running jobs `runai list jobs`
 
 ## Submitting Jobs
 
@@ -102,8 +102,8 @@ script works properly if you're using [zsh](https://ohmyz.sh/) shell. If your jo
 write your command (`python hello.py` in the above example) directly inside
 the [runai submit script](scripts/runai_submit_train.sh) instead of passing it as an argument.
 
-**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your epfl username}-ivrldata2` volume
-and `runai-ivrl-{Your epfl username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
+**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your gaspar username}-ivrldata2` volume
+and `runai-ivrl-{Your gaspar username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
 volumes using the command `kubectl get pvc`
 
 **Here is a list of handy runai commands:**
