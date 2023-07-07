@@ -78,7 +78,7 @@ This image (~920mb) includes everything you need for a datascience project using
 * Matplotlib
 * OpenCV
 
-### pytorch1.10:cuda11
+### pytorch1.10:cuda11.3
 
 [`ic-registry.epfl.ch/ivrl/pytorch1.10:cuda11.3v2`](pytorch1.10+cuda11.3)
 
@@ -93,6 +93,25 @@ included are
 * OpenCV
 
 This image is built upon `nvcr.io/nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04` container from Nvidia.
+
+
+### pytorch2.01:cuda11.7 (Recommended)
+
+[`ic-registry.epfl.ch/ivrl/pajouheshgar/pytorch2.01:cuda11.7v2`](pytorch2.01+cuda11.7)
+
+This image (~12.75gb) contains pytorch and is compatible with both V100 and A100 GPUs in the cluster. Other packages
+included are
+
+* Pytorch 2.01 with CUDA 11.7
+* Jupyter, and Jupyterlab
+* Numpy, Pandas
+* Scikit-learn, Scipy
+* Matplotlib
+* OpenCV
+* ffmpeg
+
+This image is built upon `nvcr.io/nvidia/pytorch:23.05-py3` container from Nvidia.
+
 
 
 [comment]: <> (#### lab-pytorch-cuda-ext)
