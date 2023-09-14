@@ -40,9 +40,9 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
   RunAI [Asking for access](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML). Choose Nicoletta Isaac
  (Assistant) Or Sabine Süsstrunk (Head of the unit) as the approver.
 * Connect to <https://app.run.ai>. Use "Login with SSO" and make sure you can login (use "EPFL" as the workspace name).
-* Download the config file: <https://icitdocs.epfl.ch/download/attachments/23986177/config?version=1&modificationDate=1656340636000&api=v2> and place it in `~/.kube/` (which you have to mkdir yourself).
+* Download the config file: <https://icitdocs.epfl.ch/download/attachments/23986177/sample_runai_kubectl_config?version=2&modificationDate=1693998652000&api=v2> and place it in `~/.kube/` (which you have to mkdir yourself).
   If the download link changes, it is likely to be
-  listed [here](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML).
+  listed [here](https://icitdocs.epfl.ch/display/clusterdocs/Getting+Started+with+RunAI+SAML). You need to be connected to EPFL network to download this file.
 * In a console, to login to RunAI, run: `runai login`
 * In a console, configure your default project with: `runai config project ivrl-{Your gaspar username}`
 * Test if you see your running jobs `runai list jobs`
