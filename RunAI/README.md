@@ -56,76 +56,7 @@ https://docs.run.ai/Administrator/Researcher-Setup/cli-install/
   with Kubernetes yaml files we suggest you use the `runai submit` command.
 * Once submitted, your job will be automatically assigned to a machine (to a Kubernetes node) and will automatically pull the docker image. Hence, your job will usually start/run a few minutes after being submitted. You can get more details on the status of your job using `runai describe job`
 
-## Submit using "runai submit"
 
-* Submit jobs with `runai submit` command [(doc)](https://docs.run.ai/Researcher/cli-reference/runai-submit/).
-* You can use our [runai submit script](scripts/runai_submit_train.sh) to make life easier!
-    * First, fill in `CLUSTER_USER`, `CLUSTER_USER_ID` in the script to match your user.
-        - `CLUSTER_USER` is the user name of your GASPAR.
-        - We can obtain your `CLUSTER_USER_ID` data in your people.epfl.ch page. Use your GASPAR to access the
-          administrative data, and `CLUSTER_USER_ID` is in the `UID` field.
-    * Then submit jobs like this:
-        - `./runai_submit_train.sh ep-gpu-pod 1 "python hello.py"`
-          Which creates a job named "ep-gpu-pod", **uses 1 GPU**, and runs `python hello.py`
-
-        - `./runai_submit_train.sh ep-gpu-pod 0.5 "python hello_half.py"`
-          Which creates a job named "ep-gpu-pod", receives **half of a GPUs memory** (2 such jobs can fit on one GPU!),
-          and runs `python hello_half.py`
-
-        - `./runai_submit_jupyter.sh ep-jupyter-pod 1`
-          Which creates a job named "ep-jupyter-pod", receives **uses 1 GPU** and then runs `jupyter lab` on it.
-
-
-* **Make sure to use your initials when naming your job**. If you're named John Smith, your job name should be something
-  like `js-gpu-pod`
-
-Here is how it uses the submit command:
-
-```bash
-runai submit $arg_job_name \
-  -i $MY_IMAGE \
-  --gpu $arg_gpu \
-  --interactive \ # For training jobs remove this line.
-  --pvc runai-ivrl-???-ivrldata2:/data \ # Fill ??? with your epfl username
-  --pvc runai-ivrl-???-scratch:/scratch \ # Fill ??? with your epfl username
-  --large-shm \
-  -e CLUSTER_USER=$CLUSTER_USER \
-  -e CLUSTER_USER_ID=$CLUSTER_USER_ID \
-  -e CLUSTER_GROUP_NAME=$CLUSTER_GROUP_NAME \
-  -e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
-  --host-ipc \
-  --command -- /bin/bash -c $arg_cmd
-```
-
-***Warning:*** Different shells parse strings differently. Our [runai submit script](scripts/runai_submit_train.sh)
-script works properly if you're using [zsh](https://ohmyz.sh/) shell. If your job does not start successfully, try to
-write your command (`python hello.py` in the above example) directly inside
-the [runai submit script](scripts/runai_submit_train.sh) instead of passing it as an argument.
-
-**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your gaspar username}-ivrldata2` volume
-and `runai-ivrl-{Your gaspar username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
-volumes using the command `kubectl get pvc`
-
-**Here is a list of handy runai commands:**
-
-* List jobs in the lab: `runai list jobs`
-
-* Find out the status of your job `runai describe job jobname`
-
-* Stop running jobs with `runai delete jobname`. Also if you want to submit another job with the same name, you need to
-  delete the existing one which occupies the name.
-
-* View logs `runai logs jobname`. Add `--tail 64` to see 64 latest lines (or other number). If you want to find the
-  token for your jupyter notebook use `runai logs | grep token`.
-
-* Run an interactive console inside the container `runai bash jobname`. This is equivalent to ssh-ing into your job.
-
-**Training vs interactive**: By default jobs are submitted in [*
-training* mode](https://docs.run.ai/Researcher/Walkthroughs/walkthrough-train/), which means they can use GPUs beyond
-the lab's quota (28GPUs at the moment), but can be stopped and restarted (so its worth checkpointing etc). Jobs can be
-made *interactive* (non-preemptible) with the `--interactive` option of `runai submit`, but they will be stopped after
-12 hours, and there is a limited number of those allowed in the lab, so please do not create more than one interactive
-job simultaneously.
 
 ## Submit using "kubectl apply -f"
 
@@ -254,6 +185,77 @@ We can list, start and stop pods using the `kubectl` command
 * `kubectl describe pod pod_name` \- shows information about a pod\, including the output logs\, useful to diagnose why
   things are not working\.
 * `kubectl logs pod_name` \- output logs from a pod
+
+## Submit using "runai submit"
+
+* Submit jobs with `runai submit` command [(doc)](https://docs.run.ai/Researcher/cli-reference/runai-submit/).
+* You can use our [runai submit script](scripts/runai_submit_train.sh) to make life easier!
+    * First, fill in `CLUSTER_USER`, `CLUSTER_USER_ID` in the script to match your user.
+        - `CLUSTER_USER` is the user name of your GASPAR.
+        - We can obtain your `CLUSTER_USER_ID` data in your people.epfl.ch page. Use your GASPAR to access the
+          administrative data, and `CLUSTER_USER_ID` is in the `UID` field.
+    * Then submit jobs like this:
+        - `./runai_submit_train.sh ep-gpu-pod 1 "python hello.py"`
+          Which creates a job named "ep-gpu-pod", **uses 1 GPU**, and runs `python hello.py`
+
+        - `./runai_submit_train.sh ep-gpu-pod 0.5 "python hello_half.py"`
+          Which creates a job named "ep-gpu-pod", receives **half of a GPUs memory** (2 such jobs can fit on one GPU!),
+          and runs `python hello_half.py`
+
+        - `./runai_submit_jupyter.sh ep-jupyter-pod 1`
+          Which creates a job named "ep-jupyter-pod", receives **uses 1 GPU** and then runs `jupyter lab` on it.
+
+
+* **Make sure to use your initials when naming your job**. If you're named John Smith, your job name should be something
+  like `js-gpu-pod`
+
+Here is how it uses the submit command:
+
+```bash
+runai submit $arg_job_name \
+  -i $MY_IMAGE \
+  --gpu $arg_gpu \
+  --interactive \ # For training jobs remove this line.
+  --pvc runai-ivrl-???-ivrldata2:/data \ # Fill ??? with your epfl username
+  --pvc runai-ivrl-???-scratch:/scratch \ # Fill ??? with your epfl username
+  --large-shm \
+  -e CLUSTER_USER=$CLUSTER_USER \
+  -e CLUSTER_USER_ID=$CLUSTER_USER_ID \
+  -e CLUSTER_GROUP_NAME=$CLUSTER_GROUP_NAME \
+  -e CLUSTER_GROUP_ID=$CLUSTER_GROUP_ID \
+  --host-ipc \
+  --command -- /bin/bash -c $arg_cmd
+```
+
+***Warning:*** Different shells parse strings differently. Our [runai submit script](scripts/runai_submit_train.sh)
+script works properly if you're using [zsh](https://ohmyz.sh/) shell. If your job does not start successfully, try to
+write your command (`python hello.py` in the above example) directly inside
+the [runai submit script](scripts/runai_submit_train.sh) instead of passing it as an argument.
+
+**Volume mounts**: The default volume mounts in the script are for IVRL (`runai-ivrl-{Your gaspar username}-ivrldata2` volume
+and `runai-ivrl-{Your gaspar username}-scratch` volume). Please change them if you are in a different lab. You can get the list of available
+volumes using the command `kubectl get pvc`
+
+**Here is a list of handy runai commands:**
+
+* List jobs in the lab: `runai list jobs`
+
+* Find out the status of your job `runai describe job jobname`
+
+* Stop running jobs with `runai delete jobname`. Also if you want to submit another job with the same name, you need to
+  delete the existing one which occupies the name.
+
+* View logs `runai logs jobname`. Add `--tail 64` to see 64 latest lines (or other number). If you want to find the
+  token for your jupyter notebook use `runai logs | grep token`.
+
+* Run an interactive console inside the container `runai bash jobname`. This is equivalent to ssh-ing into your job.
+
+**Training vs interactive**: By default jobs are submitted in [*
+training* mode](https://docs.run.ai/Researcher/Walkthroughs/walkthrough-train/), which means they can use GPUs beyond
+the lab's quota (28GPUs at the moment), but can be stopped and restarted (so its worth checkpointing etc). Jobs can be
+made *interactive* (non-preemptible) with the `--interactive` option of `runai submit`, but they will be stopped after
+12 hours, and there is a limited number of those allowed in the lab, so please do not create more than one interactive
+job simultaneously.
 
 ## Create your working directory
 
