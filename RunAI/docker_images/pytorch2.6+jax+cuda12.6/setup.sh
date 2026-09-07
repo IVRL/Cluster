@@ -20,10 +20,32 @@ fi
 
 printf "\nsu - ${CLUSTER_USER}\n" >> ~/.bashrc
 
+USER_BASHRC=/home/$CLUSTER_USER/.bashrc
+
 # Put the Claude Code / Codex CLIs on the PATH, and keep LD_LIBRARY_PATH unset
 # so JAX and PyTorch load the CUDA libs bundled in their own pip wheels.
-if ! grep -q "ai-clis" /home/$CLUSTER_USER/.bashrc 2>/dev/null; then
-	printf '\nexport PATH="/opt/ai-clis/.local/bin:$PATH"\nunset LD_LIBRARY_PATH\n' >> /home/$CLUSTER_USER/.bashrc
+if ! grep -q "ai-clis" $USER_BASHRC 2>/dev/null; then
+	printf '\nexport PATH="/opt/ai-clis/.local/bin:$PATH"\nunset LD_LIBRARY_PATH\n' >> $USER_BASHRC
+fi
+
+# The home directory is wiped together with the pod, so keep the CLI logins and
+# session history on scratch instead. CLUSTER_SCRATCH_USER is the name of your
+# folder under /scratch (e.g. "Ehsan" -> /scratch/Ehsan). Use the claude-rcp and
+# codex-rcp aliases to get the persistent config; plain claude/codex stay
+# ephemeral.
+if [ -n "$CLUSTER_SCRATCH_USER" ] && [ -d /scratch ]; then
+	SCRATCH_HOME=/scratch/$CLUSTER_SCRATCH_USER
+
+	mkdir -p $SCRATCH_HOME/.claude-rcp $SCRATCH_HOME/.codex-rcp
+	chown $CLUSTER_USER:$CLUSTER_GROUP_NAME $SCRATCH_HOME $SCRATCH_HOME/.claude-rcp $SCRATCH_HOME/.codex-rcp
+
+	if ! grep -q "claude-rcp" $USER_BASHRC 2>/dev/null; then
+		printf '\nalias claude-rcp="CLAUDE_CONFIG_DIR=%s/.claude-rcp claude"\nalias codex-rcp="CODEX_HOME=%s/.codex-rcp codex"\n' "$SCRATCH_HOME" "$SCRATCH_HOME" >> $USER_BASHRC
+	fi
+
+	echo "Persistent CLI config: ${SCRATCH_HOME}/.claude-rcp and ${SCRATCH_HOME}/.codex-rcp"
+else
+	echo "CLUSTER_SCRATCH_USER not set or /scratch not mounted: claude/codex config will not persist"
 fi
 
 su $CLUSTER_USER

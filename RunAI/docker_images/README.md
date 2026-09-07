@@ -130,6 +130,18 @@ This image contains both PyTorch and JAX on CUDA 12.6. Packages included are
 * ffmpeg
 * Claude Code and Codex CLIs (on the `PATH` for every user)
 
+Set `CLUSTER_SCRATCH_USER` in your pod spec to your folder name under `/scratch` (e.g. `Ehsan`).
+`setup.sh` then creates `/scratch/$CLUSTER_SCRATCH_USER/.claude-rcp` and `.codex-rcp` and defines two
+aliases, so the CLI logins and session history survive the pod:
+
+```
+claude-rcp      # claude with CLAUDE_CONFIG_DIR on scratch
+codex-rcp       # codex with CODEX_HOME on scratch
+```
+
+Plain `claude` and `codex` still work, but their config lives in the container home and is lost
+when the pod stops.
+
 This image is built upon `nvcr.io/nvidia/cuda:12.6.3-cudnn-devel-ubuntu22.04` container from Nvidia.
 
 Both PyTorch and JAX load the CUDA libraries bundled inside their own pip wheels, so
