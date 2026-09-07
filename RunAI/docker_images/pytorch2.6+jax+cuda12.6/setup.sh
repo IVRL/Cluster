@@ -32,15 +32,17 @@ fi
 # session history on scratch instead. CLUSTER_SCRATCH_USER is the name of your
 # folder under /scratch (e.g. "Ehsan" -> /scratch/Ehsan). Use the claude-rcp and
 # codex-rcp aliases to get the persistent config; plain claude/codex stay
-# ephemeral.
+# ephemeral. The aliases mkdir their own config dir because codex errors out if
+# CODEX_HOME does not already exist (claude creates it by itself).
 if [ -n "$CLUSTER_SCRATCH_USER" ] && [ -d /scratch ]; then
 	SCRATCH_HOME=/scratch/$CLUSTER_SCRATCH_USER
 
-	mkdir -p $SCRATCH_HOME/.claude-rcp $SCRATCH_HOME/.codex-rcp
-	chown $CLUSTER_USER:$CLUSTER_GROUP_NAME $SCRATCH_HOME $SCRATCH_HOME/.claude-rcp $SCRATCH_HOME/.codex-rcp
+	# Create these as the cluster user rather than as root: /scratch is a network
+	# volume that squashes root, so a root mkdir there fails with EACCES.
+	su $CLUSTER_USER -c "mkdir -p $SCRATCH_HOME/.claude-rcp $SCRATCH_HOME/.codex-rcp"
 
 	if ! grep -q "claude-rcp" $USER_BASHRC 2>/dev/null; then
-		printf '\nalias claude-rcp="CLAUDE_CONFIG_DIR=%s/.claude-rcp claude"\nalias codex-rcp="CODEX_HOME=%s/.codex-rcp codex"\n' "$SCRATCH_HOME" "$SCRATCH_HOME" >> $USER_BASHRC
+		printf '\nalias claude-rcp="mkdir -p %s/.claude-rcp && CLAUDE_CONFIG_DIR=%s/.claude-rcp claude"\nalias codex-rcp="mkdir -p %s/.codex-rcp && CODEX_HOME=%s/.codex-rcp codex"\n' "$SCRATCH_HOME" "$SCRATCH_HOME" "$SCRATCH_HOME" "$SCRATCH_HOME" >> $USER_BASHRC
 	fi
 
 	echo "Persistent CLI config: ${SCRATCH_HOME}/.claude-rcp and ${SCRATCH_HOME}/.codex-rcp"
