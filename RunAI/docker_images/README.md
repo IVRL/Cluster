@@ -95,7 +95,7 @@ included are
 This image is built upon `nvcr.io/nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04` container from Nvidia.
 
 
-### pytorch2.01:cuda11.7 (Recommended)
+### pytorch2.01:cuda11.7
 
 [`ic-registry.epfl.ch/ivrl/pajouheshgar/pytorch2.01:cuda11.7v2`](pytorch2.01+cuda11.7)
 
@@ -111,6 +111,35 @@ included are
 * ffmpeg
 
 This image is built upon `nvcr.io/nvidia/pytorch:23.05-py3` container from Nvidia.
+
+
+### pytorch2.6+jax:cuda12.6 (Recommended)
+
+[`ic-registry.epfl.ch/ivrl/pajouheshgar/pytorch2.6-jax:cuda12.6`](pytorch2.6+jax+cuda12.6)
+
+This image contains both PyTorch and JAX on CUDA 12.6. Packages included are
+
+* PyTorch + torchvision with CUDA 12.6 (`cu126` wheels)
+* JAX with CUDA 12 (`jax[cuda12]`), Flax, Optax
+* Jupyterlab
+* wandb
+* Numpy, Pandas, Scipy
+* Matplotlib
+* moviepy 1.0.3
+* OpenCV
+* ffmpeg
+* Claude Code and Codex CLIs (on the `PATH` for every user)
+
+This image is built upon `nvcr.io/nvidia/cuda:12.6.3-cudnn-devel-ubuntu22.04` container from Nvidia.
+
+Both PyTorch and JAX load the CUDA libraries bundled inside their own pip wheels, so
+`LD_LIBRARY_PATH` **must stay unset** - otherwise JAX picks up the system CUDA install and fails.
+The image already unsets it (via `ENV` in the Dockerfile, and in the cluster user's `.bashrc` via
+`setup.sh`), but if you re-export it in your own scripts or pod spec, unset it again before running:
+
+```
+unset LD_LIBRARY_PATH
+```
 
 
 
